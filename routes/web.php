@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\dashboardPostController;
 use App\Http\Controllers\postController;
 use App\Http\Controllers\SignController;
@@ -68,7 +69,7 @@ Route::get('/categories', function ()
     ]);
 });
 
-
+Route::resource('/dashboard/categories', AdminController::class)->except('show')->middleware('admin');
 
 
 
