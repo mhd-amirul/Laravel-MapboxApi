@@ -50,7 +50,7 @@ class SignController extends Controller
 
         if (Auth::attempt($val)) {
             $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('/');
         }
 
         return back()->with('errlog', 'Login Gagal');
@@ -61,6 +61,6 @@ class SignController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/');
+        return redirect('/login');
     }
 }
