@@ -15,16 +15,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Proses Login Registrasi
-Route::get('/register',[SignController::class, 'Register'])->middleware('guest');
-Route::post('/register',[SignController::class, 'store']);
+Route::middleware(['guest'])->group(function () : void {
+    Route::controller(SignController::class)->group(function () : void {
+        Route::get('/register',[SignController::class, 'Register']);
+        Route::post('/register',[SignController::class, 'store']);
+        Route::get('/login',[SignController::class, 'Signin'])->name('login');
+        Route::post('/login',[SignController::class, 'authenticate']);
+    });
+});
 
-// Proses Login 
-Route::get('/login',[SignController::class, 'Signin'])->name('login')->middleware('guest');
-Route::post('/login',[SignController::class, 'authenticate']);
-
-// Proses Logout
-Route::post('/logout',[SignController::class, 'logout']);
-
-// akses halaman home
-Route::get('/', MapLocation::class);
+Route::middleware(['auth'])->group(function () : void {
+    Route::post('/logout',[SignController::class, 'logout']);
+    Route::get('/', MapLocation::class);
+});
