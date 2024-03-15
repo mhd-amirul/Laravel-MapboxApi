@@ -1,10 +1,11 @@
 @extends('layouts.app')
+
 @section('container')
     <div class="row justify-content-center mt-5">
         <div class="col-lg-5 mt-4">
             <main class="form-registration mt-5">
-                <h1 class="h3 mb-3 fw-normal text-center">Registration</h1>
-                <form action="/register" method="post">
+                <h1 class="h3 mb-3 fw-normal text-center">Sign Up</h1>
+                <form action="{{ route('signup.store') }}" method="post">
                     @csrf
                     <div class="form-floating">
                         <input type="name" name="name" class="form-control rounded-top @error('name') is-invalid @enderror" id="name" placeholder="Name" value="{{ old('name') }}">
@@ -45,7 +46,7 @@
                     <button class="w-100 btn btn-lg btn-primary mt-3" type="submit">Register</button>
                 </form>
                 <small class="d-block text-center mt-3">
-                    Already Have Account? <a href="/login">Sign In Now!</a>
+                    Already Have Account? <a href="{{ route('signin.view') }}">Sign In Now!</a>
                 </small>
             </main>
         </div>

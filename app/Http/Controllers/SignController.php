@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\SignInRequest;
+use App\Http\Requests\Auth\SignUpRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,44 +25,41 @@ class SignController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(SignUpRequest $request)
     {
-        $val = $request->validate(
-            [
-                'name' => 'required|min:5|max:20',
-                'username' => 'required|min:5|max:20|unique:users',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:5|max:255'
-            ]
-        );
-        
-        $val['password'] = Hash::make($val['password']);
-        User::create($val);
-        return redirect('/login')->with('success', 'Register Berhasil');
+        $data = $request->all();
+
+        $data['password'] = Hash::make($data['password']);
+
+        User::create($data);
+
+        return redirect()->route('signin.view')
+            ->with('success', 'Sign up success');
     }
 
-    public function authenticate(Request $request)
+    public function authenticate(SignInRequest $request)
     {
-        $val = $request->validate(
-            [
-                'email' => 'required|email ',
-                'password' => 'required'
-            ]
-        );
+        $auth = [
+            'email'     => $request->get('email'),
+            'password'  => $request->get('password'),
+        ];
 
-        if (Auth::attempt($val)) {
+        if (Auth::attempt($auth)) {
             $request->session()->regenerate();
-            return redirect()->intended('/');
+
+            return redirect()->route('index');
         }
 
-        return back()->with('errlog', 'Login Gagal');
+        return back()->with('error', 'Sign in failed');
     }
 
-    public function logout(Request $request)
+    public function signOut(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+
+        return redirect()->route('signin.view');
     }
 }

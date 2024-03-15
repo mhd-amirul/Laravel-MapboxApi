@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\SignController;
-use App\Http\Livewire\MapLocation;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,15 +15,18 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['guest'])->group(function () : void {
-    Route::controller(SignController::class)->group(function () : void {
-        Route::get('/register',[SignController::class, 'Register']);
-        Route::post('/register',[SignController::class, 'store']);
-        Route::get('/login',[SignController::class, 'Signin'])->name('login');
-        Route::post('/login',[SignController::class, 'authenticate']);
+    Route::controller(SignController::class)->prefix('auth')->group(function () : void {
+        Route::get( '/signup','Register')->name('signup.view');
+        Route::post('/signup','store')->name('signup.store');
+
+        Route::get( '/signin', 'Signin')->name('signin.view');
+        Route::post('/signin', 'authenticate')->name('signin.store');
     });
 });
 
 Route::middleware(['auth'])->group(function () : void {
-    Route::post('/logout',[SignController::class, 'logout']);
-    Route::get('/', MapLocation::class);
+    Route::post('/signout',[SignController::class, 'signOut'])->name('signout.store');
+    Route::get('/', fn () =>  view('Home') )->name('index');
 });
+
+Route::fallback(fn () => view('welcome'));
